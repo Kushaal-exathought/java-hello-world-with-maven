@@ -1,5 +1,8 @@
 package hello;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -19,6 +22,26 @@ public class JoinMethod {
         this.on = on;
         this.sortJoin = sortJoin;
         this.uniqueJoin = uniqueJoin;
+    }
+
+    public JoinMethod(JSONObject joinObject) {
+
+        this.method = joinObject.getString("method");
+
+        JSONArray joinOnArray = joinObject.getJSONArray("on");
+        ComparisonColumn[] joinOn = new ComparisonColumn[joinOnArray.length()];
+        for (int k = 0; k < joinOnArray.length(); k++) {
+            JSONObject joinOnObject = joinOnArray.getJSONObject(k);
+            String leftColumnJoin = joinOnObject.getString("left_column");
+            String rightColumnJoin = joinOnObject.getString("right_column");
+            String joinCondition = joinOnObject.getString("condition");
+
+            joinOn[k] = new ComparisonColumn(leftColumnJoin,rightColumnJoin,joinCondition);
+        }
+        this.on = joinOn;
+
+        this.sortJoin = joinObject.getBoolean("sort_join");
+        this.uniqueJoin = joinObject.getBoolean("unique_join");
     }
 
     public String getMethod() {
