@@ -11,6 +11,7 @@ public class Table {
     private String[] columns;
 
     private Boolean isLeftTable;
+
     private int noOfColumns;
     private SortColumn[] sort_columns;
     private boolean generate_unique_id;

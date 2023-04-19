@@ -1,5 +1,8 @@
 package hello;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 public class GenerateQuery {
 
     private Table left_table;
@@ -7,12 +10,34 @@ public class GenerateQuery {
     private JoinMethod join;
     private ComparisonColumns comparisonColumns;
 
+    private String[] commonColumns;
+
     public GenerateQuery(Table left_table, Table right_table, JoinMethod join, ComparisonColumns comparisonColumns) {
         this.left_table = left_table;
         this.right_table = right_table;
         this.join = join;
         this.comparisonColumns = comparisonColumns;
     }
+
+    public GenerateQuery(JSONObject obj){
+        JSONObject leftTableObject = obj.getJSONObject("left_table");
+        Table constructedLeftTableObject = new Table(leftTableObject,true);
+
+        JSONObject rightTableObject = obj.getJSONObject("right_table");
+        Table constructedRightTableObject = new Table(rightTableObject, false);
+
+        JSONObject joinObject = obj.getJSONObject("join");
+        JoinMethod constructedJoinObject = new JoinMethod(joinObject);
+
+        JSONArray compareArray = obj.getJSONArray("compare");
+        ComparisonColumns constructedCompareObject = new ComparisonColumns(compareArray);
+
+        this.left_table = constructedLeftTableObject;
+        this.right_table = constructedRightTableObject;
+        this.join = constructedJoinObject;
+        this.comparisonColumns = constructedCompareObject;
+    }
+
 
     public Table getLeft_table() {
         return left_table;
@@ -71,7 +96,12 @@ public class GenerateQuery {
                 + "AS\n"
                 + "("
                 +this.generateQueryForTable(this.right_table)
-                +")"
+                +") \n"
+                +",final_table \n"
+                +"AS \n"
+                +"( \n"
+                + this.generateFinalQuery(this.left_table, this.right_table,this.join,this.comparisonColumns)
+                +") \n"
                 +this.generateMainQuery(this.left_table, this.right_table,this.join,this.comparisonColumns);
 
         System.out.println("dataQuery-->" + dataQuery);
@@ -83,12 +113,35 @@ public class GenerateQuery {
               + this.getColumnName(tableObject,false) +"\n"
                + this.generateUniqueColumn(tableObject)
                + this.generateSortColumn(tableObject)
+               + this.generateDataJson(tableObject)
               + "FROM " + tableObject.getDatabase() + "." + tableObject.getName() +"\n";
 
 //        System.out.println("dataQuery--->" + dataQuery);
         return dataQuery;
     }
 
+    private String generateDataJson(Table table){
+       String query = ",CONCAT( \n"
+               + "'{', \n"
+               +this.getJsonString(table.getColumns())
+               + "'}'  ) AS data_json \n";
+       return query;
+    }
+     private String getJsonString(String[] columns){
+         StringBuilder jsonQuery = new StringBuilder("");
+        for(int i=0; i<columns.length; i++){
+//            jsonQuery.append("CONCAT('\""+columns[i]+"\":', CAST("+columns[i]+" AS VARCHAR)");
+            jsonQuery.append("CONCAT('\""+columns[i]+"\":','\"', CAST("+columns[i]+" AS VARCHAR),'\"'");
+            if(i == columns.length-1){
+                jsonQuery.append("), \n");
+            }else{
+                jsonQuery.append(",','), \n");
+            }
+
+        }
+//        String.join("",columns);
+        return jsonQuery.toString();
+     }
     private String getColumnName(Table table, Boolean readTableIsLeft){
         String[] columns = table.getColumns();
 
@@ -136,14 +189,66 @@ public class GenerateQuery {
     }
 
     private String generateMainQuery(Table leftTableObject, Table rightTableObject, JoinMethod joinObject, ComparisonColumns compareColumnsArray){
-        String dataQuery = "SELECT \n"
-                + this.removeStartingDelimiter(this.getColumnName(leftTableObject, true),",")+"\n"
-                + this.getColumnName(rightTableObject, true)+"\n"
-                + "FROM left_table lt\n"
-                + this.getJoinQuery(joinObject)+"\n"
-                + this.getWhereQuery(compareColumnsArray)+"\n";
+//        String dataQuery = "SELECT \n"
+//                + this.removeStartingDelimiter(this.getColumnName(leftTableObject, true),",")+"\n"
+//                + this.getColumnName(rightTableObject, true)+"\n"
+//                + "FROM left_table lt\n"
+//                + this.getJoinQuery(joinObject)+"\n"
+//                + this.getWhereQuery(compareColumnsArray)+"\n";
 
+        String dataQuery =  "SELECT \n"
+                + "    OLD_TABLE_NAME, \n"
+                + "    OLD_COLUMN_NAME, \n"
+                + "    OLD_COLUMN_VALUE, \n"
+                + "    NEW_TABLE_NAME, \n"
+                + "    NEW_COLUMN_NAME, \n"
+                + "    NEW_COLUMN_VALUE, \n"
+                + "    OLD_TABLE_VALUE_JSON, \n"
+                + "    NEW_TABLE_VALUE_JSON, \n"
+                + "    CASE \n"
+                + "        WHEN ( OLD_TABLE_VALUE_JSON IS NULL AND NEW_TABLE_VALUE_JSON IS NOT NULL ) THEN CONCAT('RECORD MISSING IN ', OLD_TABLE_NAME) \n"
+                + "        WHEN ( OLD_TABLE_VALUE_JSON IS NOT NULL AND NEW_TABLE_VALUE_JSON IS NULL ) THEN CONCAT('RECORD MISSING IN ', NEW_TABLE_NAME) \n"
+                + "        ELSE 'DATA MISMATCH' \n"
+                + "    END AS COMMENTS \n"
+                + "FROM final_table \n"
+                + "ORDER BY \n"
+                + "    OLD_TABLE_VALUE_JSON, \n"
+                + "    NEW_TABLE_VALUE_JSON, \n"
+                + "    OLD_COLUMN_NAME, \n"
+                + "    NEW_COLUMN_NAME \n";
         return dataQuery;
+    }
+    private String generateFinalQuery(Table leftTableObject, Table rightTableObject, JoinMethod joinObject, ComparisonColumns compareColumnsArray){
+
+        StringBuilder finalQuery = new StringBuilder("");
+
+        ComparisonColumn[] compareArray = compareColumnsArray.getComparisonColumns();
+        for(int i=0; i<compareArray.length; i++){
+            ComparisonColumn compareObject = compareArray[i];
+
+            finalQuery.append("SELECT \n");
+
+            finalQuery.append("'"+leftTableObject.getName()+"' AS OLD_TABLE_NAME, \n");
+            finalQuery.append("'"+compareObject.getColumn1()+"' AS OLD_COLUMN_NAME, \n");
+            finalQuery.append("CAST(lt."+compareObject.getColumn1()+" AS VARCHAR) AS OLD_COLUMN_VALUE, \n");
+
+            finalQuery.append("'"+rightTableObject.getName()+"' AS NEW_TABLE_NAME, \n");
+            finalQuery.append("'"+compareObject.getColumn2()+"' AS NEW_COLUMN_NAME, \n");
+            finalQuery.append("CAST(lt."+compareObject.getColumn2()+" AS VARCHAR) AS NEW_COLUMN_VALUE, \n");
+
+            finalQuery.append("lt.data_json AS OLD_TABLE_VALUE_JSON, \n");
+            finalQuery.append("rt.data_json AS NEW_TABLE_VALUE_JSON \n");
+
+            finalQuery.append("FROM left_table lt \n");
+            finalQuery.append(this.getJoinQuery(joinObject));
+            finalQuery.append("WHERE lt."+compareObject.getColumn1()+" IS "+this.getComparisonString(compareObject.getCondition())+" DISTINCT FROM rt."+compareObject.getColumn2()+"\n");
+
+            if(compareArray.length == 1 || i < compareArray.length-1){
+                finalQuery.append("UNION ALL \n");
+            }
+        }
+
+        return finalQuery.toString();
     }
 
     private String removeStartingDelimiter(String query, String delimiter){
