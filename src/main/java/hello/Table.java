@@ -18,12 +18,12 @@ public class Table {
 
     // Constructors
 
-    public Table(JSONObject tableObject, Boolean isLeftTable){
+    public Table(JSONObject tableObject, Boolean isLeftTable) {
         this.database = tableObject.getString("database");
         this.name = tableObject.getString("name");
         this.isLeftTable = isLeftTable;
 
-        JSONArray jsonArray =  tableObject.getJSONArray("columns");
+        JSONArray jsonArray = tableObject.getJSONArray("columns");
         String[] stringArray = new String[jsonArray.length()];
         for (int i = 0; i < jsonArray.length(); i++) {
             stringArray[i] = jsonArray.getString(i);
@@ -34,11 +34,11 @@ public class Table {
 
         JSONArray sortColumnArray = tableObject.getJSONArray("sort_columns");
         SortColumn[] sc = new SortColumn[sortColumnArray.length()];
-        for(int p=0; p<sortColumnArray.length(); p++){
+        for (int p = 0; p < sortColumnArray.length(); p++) {
             JSONObject sortObject = sortColumnArray.getJSONObject(p);
             String sortOrder = sortObject.getString("column");
             String sortOrderType = sortObject.getString("order_type");
-            SortColumn scc = new SortColumn(sortOrder,sortOrderType);
+            SortColumn scc = new SortColumn(sortOrder, sortOrderType);
             sc[p] = scc;
         }
         this.sortColumns = sc;
@@ -46,7 +46,7 @@ public class Table {
         this.generateUniqueId = tableObject.getBoolean("generate_unique_id");
         this.generateSortId = tableObject.getBoolean("generate_sort_id");
 
-        JSONArray filterArray =  tableObject.getJSONArray("filter");
+        JSONArray filterArray = tableObject.getJSONArray("filter");
         String[] filterArrayCast = new String[filterArray.length()];
         for (int i = 0; i < filterArray.length(); i++) {
             filterArrayCast[i] = filterArray.getString(i);

@@ -1,17 +1,23 @@
 package hello;
 
+enum CompareCondition {
+    EQUAL,
+    NOT_EQUAL
+}
+
 public class ComparisonColumn {
 
     private String column1;
     private String column2;
-    private String condition;
+    private CompareCondition condition;
 
     // Constructors
 
     public ComparisonColumn(String column1, String column2, String condition) {
         this.column1 = column1;
         this.column2 = column2;
-        this.condition = condition;
+        CompareCondition compareCondition = CompareCondition.valueOf(condition.toUpperCase());
+        this.condition = compareCondition;
     }
 
     // Getters and Setters
@@ -31,11 +37,12 @@ public class ComparisonColumn {
         this.column2 = column2;
     }
 
-    public String getCondition() {
+
+    public CompareCondition getCondition() {
         return condition;
     }
 
-    public void setCondition(String condition) {
+    public void setCondition(CompareCondition condition) {
         this.condition = condition;
     }
 

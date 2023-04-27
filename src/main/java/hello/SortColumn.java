@@ -1,13 +1,11 @@
 package hello;
 
-public  class SortColumn {
+public class SortColumn {
 
     private String column;
     private String orderType;
 
     // Constructors
-    public SortColumn() {}
-
     public SortColumn(String column, String orderType) {
         this.column = column;
         this.orderType = orderType;

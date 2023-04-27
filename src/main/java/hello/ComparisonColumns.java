@@ -9,7 +9,7 @@ public class ComparisonColumns {
     private ComparisonColumn[] comparisonColumns;
 
     // Constructors
-    public ComparisonColumns(JSONArray compareArray){
+    public ComparisonColumns(JSONArray compareArray) {
 
         ComparisonColumn[] constructedCompareArray = new ComparisonColumn[compareArray.length()];
         for (int j = 0; j < compareArray.length(); j++) {
@@ -19,7 +19,7 @@ public class ComparisonColumns {
             String rightColumnCompare = compareObj.getString("right_column");
             String compareCondition = compareObj.getString("condition");
 
-            constructedCompareArray[j] = new ComparisonColumn(leftColumnCompare,rightColumnCompare,compareCondition);
+            constructedCompareArray[j] = new ComparisonColumn(leftColumnCompare, rightColumnCompare, compareCondition);
 
         }
 

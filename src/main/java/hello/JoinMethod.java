@@ -5,16 +5,25 @@ import org.json.JSONObject;
 
 import java.util.Arrays;
 
+enum JoinType {
+    FULL,
+    INNER,
+    LEFT,
+    RIGHT,
+    CROSS
+}
+
 public class JoinMethod {
 
-    private String method;
+    private JoinType method;
     private ComparisonColumn[] on;
     private boolean sortJoin;
     private boolean uniqueJoin;
 
     // Constructors
-    public JoinMethod(JSONObject joinObject) {
-        this.method = joinObject.getString("method");
+    public JoinMethod(JSONObject joinObject) throws IllegalArgumentException {
+        JoinType joinMethod = JoinType.valueOf(joinObject.getString("method").toUpperCase());
+        this.method = joinMethod;
 
         JSONArray joinOnArray = joinObject.getJSONArray("on");
         ComparisonColumn[] joinOn = new ComparisonColumn[joinOnArray.length()];
@@ -24,7 +33,7 @@ public class JoinMethod {
             String rightColumnJoin = joinOnObject.getString("right_column");
             String joinCondition = joinOnObject.getString("condition");
 
-            joinOn[k] = new ComparisonColumn(leftColumnJoin,rightColumnJoin,joinCondition);
+            joinOn[k] = new ComparisonColumn(leftColumnJoin, rightColumnJoin, joinCondition);
         }
         this.on = joinOn;
 
@@ -33,21 +42,23 @@ public class JoinMethod {
     }
 
     // Getters and setters
-    public String getMethod() {
+
+    public JoinType getMethod() {
         return method;
     }
 
-    public void setMethod(String method) {
+    public void setMethod(JoinType method) {
         this.method = method;
     }
 
-    public ComparisonColumn[] getJoinOn() {
+    public ComparisonColumn[] getOn() {
         return on;
     }
 
-    public void setJoinOn(ComparisonColumn[] on) {
+    public void setOn(ComparisonColumn[] on) {
         this.on = on;
     }
+
 
     public boolean isSortJoin() {
         return sortJoin;
@@ -68,7 +79,7 @@ public class JoinMethod {
     @Override
     public String toString() {
         return "JoinMethod{" +
-                "method='" + method + '\'' +
+                "method=" + method +
                 ", on=" + Arrays.toString(on) +
                 ", sortJoin=" + sortJoin +
                 ", uniqueJoin=" + uniqueJoin +
