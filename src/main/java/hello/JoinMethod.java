@@ -2,7 +2,6 @@ package hello;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-
 import java.util.Arrays;
 
 enum JoinType {

@@ -103,27 +103,23 @@ public class ConstructQuery {
 
     // Helper methods
     private String generateQueryForTable(Table tableObject) {
-        String dataQuery = getTabs(1) + "SELECT " + NEW_LINE
+        return getTabs(1) + "SELECT " + NEW_LINE
                 + getColumnName(tableObject) + NEW_LINE
                 + generateUniqueColumn(tableObject)
                 + generateSortColumn(tableObject)
                 + generateDataJson(tableObject)
                 + getTabs(1) + "FROM " + tableObject.getDatabase() + "." + tableObject.getName() + NEW_LINE;
-
-        return dataQuery;
     }
 
     private String generateDataJson(Table table) {
-        String query = getTabs(2) + ",CONCAT( " + NEW_LINE
+        return getTabs(2) + ",CONCAT( " + NEW_LINE
                 + getTabs(3) + "'{', " + NEW_LINE
                 + getJsonString(table.getColumns())
                 + getTabs(3) + "'}' ) AS data_json " + NEW_LINE;
-
-        return query;
     }
 
     private String getJsonString(String[] columns) {
-        StringBuilder jsonQuery = new StringBuilder("");
+        StringBuilder jsonQuery = new StringBuilder();
         for (int i = 0; i < columns.length; i++) {
             jsonQuery.append(getTabs(4) + "CONCAT('\"" + columns[i] + "\":','\"', CAST(" + columns[i] + " AS VARCHAR),'\"'");
             if (i == columns.length - 1) {
@@ -177,7 +173,7 @@ public class ConstructQuery {
     }
 
     private static String generateMainQuery() {
-        String dataQuery = "SELECT " + NEW_LINE
+        return "SELECT " + NEW_LINE
                 + "    OLD_TABLE_NAME, " + NEW_LINE
                 + "    OLD_COLUMN_NAME, " + NEW_LINE
                 + "    OLD_COLUMN_VALUE, " + NEW_LINE
@@ -197,31 +193,26 @@ public class ConstructQuery {
                 + "    NEW_TABLE_VALUE_JSON, " + NEW_LINE
                 + "    OLD_COLUMN_NAME, " + NEW_LINE
                 + "    NEW_COLUMN_NAME " + NEW_LINE;
-        return dataQuery;
     }
 
     private String generateColumnCompareQuery() {
-        StringBuilder finalQuery = new StringBuilder("");
+        StringBuilder finalQuery = new StringBuilder();
         ComparisonColumn[] compareArray = this.comparisonColumns.getComparisonColumns();
         for (int i = 0; i < compareArray.length; i++) {
             ComparisonColumn compareObject = compareArray[i];
 
-            finalQuery.append(getTabs(1) + "SELECT " + NEW_LINE);
-
-            finalQuery.append(getTabs(2) + "'" + this.leftTable.getName() + "' AS OLD_TABLE_NAME, " + NEW_LINE);
-            finalQuery.append(getTabs(2) + "'" + compareObject.getColumn1() + "' AS OLD_COLUMN_NAME, " + NEW_LINE);
-            finalQuery.append(getTabs(2) + "CAST(lt." + compareObject.getColumn1() + " AS VARCHAR) AS OLD_COLUMN_VALUE, " + NEW_LINE);
-
-            finalQuery.append(getTabs(2) + "'" + this.rightTable.getName() + "' AS NEW_TABLE_NAME, " + NEW_LINE);
-            finalQuery.append(getTabs(2) + "'" + compareObject.getColumn2() + "' AS NEW_COLUMN_NAME, " + NEW_LINE);
-            finalQuery.append(getTabs(2) + "CAST(rt." + compareObject.getColumn2() + " AS VARCHAR) AS NEW_COLUMN_VALUE, " + NEW_LINE);
-
-            finalQuery.append(getTabs(2) + "lt.data_json AS OLD_TABLE_VALUE_JSON, " + NEW_LINE);
-            finalQuery.append(getTabs(2) + "rt.data_json AS NEW_TABLE_VALUE_JSON " + NEW_LINE);
-
-            finalQuery.append(getTabs(1) + "FROM left_table lt " + NEW_LINE);
-            finalQuery.append(getJoinQuery());
-            finalQuery.append(getTabs(1) + "WHERE lt." + compareObject.getColumn1() + " IS " + getComparisonString(compareObject.getCondition().toString()) + " DISTINCT FROM rt." + compareObject.getColumn2() + NEW_LINE);
+            finalQuery.append(getTabs(1) + "SELECT " + NEW_LINE)
+                    .append(getTabs(2) + "'" + this.leftTable.getName() + "' AS OLD_TABLE_NAME, " + NEW_LINE)
+                    .append(getTabs(2) + "'" + compareObject.getColumn1() + "' AS OLD_COLUMN_NAME, " + NEW_LINE)
+                    .append(getTabs(2) + "CAST(lt." + compareObject.getColumn1() + " AS VARCHAR) AS OLD_COLUMN_VALUE, " + NEW_LINE)
+                    .append(getTabs(2) + "'" + this.rightTable.getName() + "' AS NEW_TABLE_NAME, " + NEW_LINE)
+                    .append(getTabs(2) + "'" + compareObject.getColumn2() + "' AS NEW_COLUMN_NAME, " + NEW_LINE)
+                    .append(getTabs(2) + "CAST(rt." + compareObject.getColumn2() + " AS VARCHAR) AS NEW_COLUMN_VALUE, " + NEW_LINE)
+                    .append(getTabs(2) + "lt.data_json AS OLD_TABLE_VALUE_JSON, " + NEW_LINE)
+                    .append(getTabs(2) + "rt.data_json AS NEW_TABLE_VALUE_JSON " + NEW_LINE)
+                    .append(getTabs(1) + "FROM left_table lt " + NEW_LINE)
+                    .append(getJoinQuery())
+                    .append(getTabs(1) + "WHERE lt." + compareObject.getColumn1() + " IS " + getComparisonString(compareObject.getCondition().toString()) + " DISTINCT FROM rt." + compareObject.getColumn2() + NEW_LINE);
 
             if (compareArray.length == 1 || i < compareArray.length - 1) {
                 finalQuery.append(getTabs(1) + "UNION ALL " + NEW_LINE);
@@ -231,7 +222,7 @@ public class ConstructQuery {
     }
 
     private String getJoinQuery() {
-        StringBuilder joinQuery = new StringBuilder("");
+        StringBuilder joinQuery = new StringBuilder();
         joinQuery.append(getTabs(1) + this.join.getMethod().toString() + " JOIN right_table rt " + NEW_LINE);
         ComparisonColumn[] join = this.join.getOn();
         for (int i = 0; i < join.length; i++) {
@@ -269,10 +260,6 @@ public class ConstructQuery {
     }
 
     private static String getTabs(int numTabs) {
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < numTabs; i++) {
-            sb.append("\t");
-        }
-        return sb.toString();
+        return "\t".repeat(numTabs);
     }
 }
