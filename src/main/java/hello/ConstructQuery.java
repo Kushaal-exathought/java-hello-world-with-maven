@@ -3,8 +3,6 @@ package hello;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.util.StringJoiner;
-
 public class ConstructQuery {
 
     private Table leftTable;
@@ -82,40 +80,40 @@ public class ConstructQuery {
                 +"left_table " + newLine
                 +"AS " + newLine
                 +"( " + newLine
-                + this.generateQueryForTable(this.leftTable)
+                + generateQueryForTable(this.leftTable)
                 + ")," + newLine
                 + "right_table " + newLine
                 + "AS " + newLine
                 + "( " + newLine
-                +this.generateQueryForTable(this.rightTable)
+                + generateQueryForTable(this.rightTable)
                 +") " + newLine
                 +",final_table " + newLine
                 +"AS " + newLine
                 +"( " + newLine
-                + this.generateFinalQuery()
+                + generateColumnCompareQuery()
                 +") " + newLine
-                +this.generateMainQuery();
+                + generateMainQuery();
 
         return dataQuery;
     }
 
     // Helper methods
     private String generateQueryForTable(Table tableObject){
-        String dataQuery = this.getTabs(1)+"SELECT " + newLine
-                + this.getColumnName(tableObject) + newLine
-                + this.generateUniqueColumn(tableObject)
-                + this.generateSortColumn(tableObject)
-                + this.generateDataJson(tableObject)
-                + this.getTabs(1)+"FROM " + tableObject.getDatabase() + "." + tableObject.getName() + newLine;
+        String dataQuery = getTabs(1)+"SELECT " + newLine
+                + getColumnName(tableObject) + newLine
+                + generateUniqueColumn(tableObject)
+                + generateSortColumn(tableObject)
+                + generateDataJson(tableObject)
+                + getTabs(1)+"FROM " + tableObject.getDatabase() + "." + tableObject.getName() + newLine;
 
         return dataQuery;
     }
 
     private String generateDataJson(Table table){
-        String query = this.getTabs(2)+",CONCAT( " + newLine
-                + this.getTabs(3)+"'{', " + newLine
-                +this.getJsonString(table.getColumns())
-                + this.getTabs(3)+"'}' ) AS data_json " + newLine;
+        String query = getTabs(2)+",CONCAT( " + newLine
+                + getTabs(3)+"'{', " + newLine
+                + getJsonString(table.getColumns())
+                + getTabs(3)+"'}' ) AS data_json " + newLine;
 
         return query;
     }
@@ -123,7 +121,7 @@ public class ConstructQuery {
     private String getJsonString(String[] columns){
         StringBuilder jsonQuery = new StringBuilder("");
         for(int i=0; i<columns.length; i++){
-            jsonQuery.append(this.getTabs(4)+"CONCAT('\""+columns[i]+"\":','\"', CAST("+columns[i]+" AS VARCHAR),'\"'");
+            jsonQuery.append(getTabs(4)+"CONCAT('\""+columns[i]+"\":','\"', CAST("+columns[i]+" AS VARCHAR),'\"'");
             if(i == columns.length-1){
                 jsonQuery.append("), " + newLine);
             }else{
@@ -136,7 +134,7 @@ public class ConstructQuery {
     private String getColumnName(Table table){
         String[] columns = table.getColumns();
         StringBuilder sb = new StringBuilder();
-        String tabs = this.getTabs(2);
+        String tabs = getTabs(2);
         for (int i = 0; i < columns.length; i++) {
             String prefix = (i == 0) ? tabs : "";
             sb.append(prefix).append(columns[i]);
@@ -151,14 +149,14 @@ public class ConstructQuery {
         if(!table.isGenerateUniqueId()){
             return "";
         }
-        return this.getTabs(2) + ",row_number() over (partition by null order by "+ String.join(", ",table.getColumns())+" asc) as unique_id " + newLine;
+        return getTabs(2) + ",row_number() over (partition by null order by "+ String.join(", ",table.getColumns())+" asc) as unique_id " + newLine;
     }
 
     private String generateSortColumn(Table table){
         if(!table.isGenerateSortId()){
             return "";
         }
-        return this.getTabs(2)+",row_number() over (partition by null order by "+ this.generateSortByQuery(table)+") as sort_id " + newLine;
+        return getTabs(2)+",row_number() over (partition by null order by "+ generateSortByQuery(table)+") as sort_id " + newLine;
     }
 
     private String generateSortByQuery(Table table){
@@ -198,31 +196,31 @@ public class ConstructQuery {
         return dataQuery;
     }
 
-    private String generateFinalQuery(){
+    private String generateColumnCompareQuery(){
         StringBuilder finalQuery = new StringBuilder("");
         ComparisonColumn[] compareArray = this.comparisonColumns.getComparisonColumns();
         for(int i=0; i<compareArray.length; i++){
             ComparisonColumn compareObject = compareArray[i];
 
-            finalQuery.append(this.getTabs(1)+"SELECT " + newLine);
+            finalQuery.append(getTabs(1)+"SELECT " + newLine);
 
-            finalQuery.append(this.getTabs(2)+"'"+this.leftTable.getName()+"' AS OLD_TABLE_NAME, " + newLine);
-            finalQuery.append(this.getTabs(2)+"'"+compareObject.getColumn1()+"' AS OLD_COLUMN_NAME, " + newLine);
-            finalQuery.append(this.getTabs(2)+"CAST(lt."+compareObject.getColumn1()+" AS VARCHAR) AS OLD_COLUMN_VALUE, " + newLine);
+            finalQuery.append(getTabs(2)+"'"+this.leftTable.getName()+"' AS OLD_TABLE_NAME, " + newLine);
+            finalQuery.append(getTabs(2)+"'"+compareObject.getColumn1()+"' AS OLD_COLUMN_NAME, " + newLine);
+            finalQuery.append(getTabs(2)+"CAST(lt."+compareObject.getColumn1()+" AS VARCHAR) AS OLD_COLUMN_VALUE, " + newLine);
 
-            finalQuery.append(this.getTabs(2)+"'"+this.rightTable.getName()+"' AS NEW_TABLE_NAME, " + newLine);
-            finalQuery.append(this.getTabs(2)+"'"+compareObject.getColumn2()+"' AS NEW_COLUMN_NAME, " + newLine);
-            finalQuery.append(this.getTabs(2)+"CAST(rt."+compareObject.getColumn2()+" AS VARCHAR) AS NEW_COLUMN_VALUE, " + newLine);
+            finalQuery.append(getTabs(2)+"'"+this.rightTable.getName()+"' AS NEW_TABLE_NAME, " + newLine);
+            finalQuery.append(getTabs(2)+"'"+compareObject.getColumn2()+"' AS NEW_COLUMN_NAME, " + newLine);
+            finalQuery.append(getTabs(2)+"CAST(rt."+compareObject.getColumn2()+" AS VARCHAR) AS NEW_COLUMN_VALUE, " + newLine);
 
-            finalQuery.append(this.getTabs(2)+"lt.data_json AS OLD_TABLE_VALUE_JSON, " + newLine);
-            finalQuery.append(this.getTabs(2)+"rt.data_json AS NEW_TABLE_VALUE_JSON " + newLine);
+            finalQuery.append(getTabs(2)+"lt.data_json AS OLD_TABLE_VALUE_JSON, " + newLine);
+            finalQuery.append(getTabs(2)+"rt.data_json AS NEW_TABLE_VALUE_JSON " + newLine);
 
-            finalQuery.append(this.getTabs(1)+"FROM left_table lt " + newLine);
-            finalQuery.append(this.getJoinQuery());
-            finalQuery.append(this.getTabs(1)+"WHERE lt."+compareObject.getColumn1()+" IS "+this.getComparisonString(compareObject.getCondition())+" DISTINCT FROM rt."+compareObject.getColumn2() + newLine);
+            finalQuery.append(getTabs(1)+"FROM left_table lt " + newLine);
+            finalQuery.append(getJoinQuery());
+            finalQuery.append(getTabs(1)+"WHERE lt."+compareObject.getColumn1()+" IS "+getComparisonString(compareObject.getCondition())+" DISTINCT FROM rt."+compareObject.getColumn2() + newLine);
 
             if(compareArray.length == 1 || i < compareArray.length-1){
-                finalQuery.append(this.getTabs(1)+"UNION ALL " + newLine);
+                finalQuery.append(getTabs(1)+"UNION ALL " + newLine);
             }
         }
         return finalQuery.toString();
@@ -230,20 +228,20 @@ public class ConstructQuery {
 
     private String getJoinQuery(){
         StringBuilder joinQuery = new StringBuilder("");
-        joinQuery.append(this.getTabs(1) + this.join.getMethod() + " JOIN right_table rt " + newLine);
+        joinQuery.append(getTabs(1) + this.join.getMethod() + " JOIN right_table rt " + newLine);
         ComparisonColumn[] join = this.join.getJoinOn();
         for(int i=0; i<join.length; i++){
             if(i == 0){
-                joinQuery.append(this.getTabs(2)+"ON lt."+join[i].getColumn1()+this.getComparisonOperator(join[i].getCondition())+"rt."+join[i].getColumn2() + newLine);
+                joinQuery.append(getTabs(2)+"ON lt."+join[i].getColumn1()+getComparisonOperator(join[i].getCondition())+"rt."+join[i].getColumn2() + newLine);
             }else {
-                joinQuery.append(this.getTabs(2)+"AND lt." + join[i].getColumn1() + this.getComparisonOperator(join[i].getCondition()) + "rt." + join[i].getColumn2() + newLine);
+                joinQuery.append(getTabs(2)+"AND lt." + join[i].getColumn1() + getComparisonOperator(join[i].getCondition()) + "rt." + join[i].getColumn2() + newLine);
             }
         }
         if(this.join.isUniqueJoin()){
-            joinQuery.append(this.getTabs(2)+"AND lt.unique_id = rt.unique_id " + newLine);
+            joinQuery.append(getTabs(2)+"AND lt.unique_id = rt.unique_id " + newLine);
         }
         if(this.join.isSortJoin()){
-            joinQuery.append(this.getTabs(2)+"AND lt.sort_id = rt.sort_id "+newLine);
+            joinQuery.append(getTabs(2)+"AND lt.sort_id = rt.sort_id "+newLine);
         }
         return joinQuery.toString();
     }
