@@ -1,13 +1,12 @@
 package hello;
 
 public class ComparisonColumn {
+
     private String column1;
     private String column2;
     private String condition;
 
     // Constructors
-    public ComparisonColumn() {
-    }
 
     public ComparisonColumn(String column1, String column2, String condition) {
         this.column1 = column1;
@@ -40,4 +39,3 @@ public class ComparisonColumn {
         this.condition = condition;
     }
 }
-

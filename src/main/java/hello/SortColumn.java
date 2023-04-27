@@ -1,6 +1,7 @@
 package hello;
 
 public  class SortColumn {
+
     private String column;
     private String order_type;
 
@@ -29,7 +30,6 @@ public  class SortColumn {
         this.order_type = order_type;
     }
 }
-
 
 
 

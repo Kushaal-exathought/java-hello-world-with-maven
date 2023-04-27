@@ -4,26 +4,15 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.Arrays;
-import java.util.List;
 
 public class JoinMethod {
+
     private String method;
-
     private ComparisonColumn[] on;
-
     private boolean sortJoin;
     private boolean uniqueJoin;
 
-    public JoinMethod() {
-    }
-
-    public JoinMethod(String method, ComparisonColumn[] on, boolean sortJoin, boolean uniqueJoin) {
-        this.method = method;
-        this.on = on;
-        this.sortJoin = sortJoin;
-        this.uniqueJoin = uniqueJoin;
-    }
-
+    // Constructors
     public JoinMethod(JSONObject joinObject) {
 
         this.method = joinObject.getString("method");
@@ -44,6 +33,7 @@ public class JoinMethod {
         this.uniqueJoin = joinObject.getBoolean("unique_join");
     }
 
+    // Getters and setters
     public String getMethod() {
         return method;
     }

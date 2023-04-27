@@ -4,12 +4,10 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class ComparisonColumns {
+
     private ComparisonColumn[] comparisonColumns;
 
-    public ComparisonColumns(ComparisonColumn[] comparisonColumns) {
-        this.comparisonColumns = comparisonColumns;
-    }
-
+    // Constructors
     public ComparisonColumns(JSONArray compareArray){
 
         ComparisonColumn[] constructedCompareArray = new ComparisonColumn[compareArray.length()];
@@ -26,6 +24,8 @@ public class ComparisonColumns {
 
         this.comparisonColumns = constructedCompareArray;
     }
+
+    // Getters and setters
     public ComparisonColumn[] getComparisonColumns() {
         return comparisonColumns;
     }
@@ -34,4 +34,3 @@ public class ComparisonColumns {
         this.comparisonColumns = comparisonColumns;
     }
 }
-

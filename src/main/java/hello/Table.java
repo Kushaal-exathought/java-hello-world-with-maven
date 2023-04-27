@@ -3,13 +3,11 @@ package hello;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.util.Arrays;
-
 public class Table {
+
     private String database;
     private String name;
     private String[] columns;
-
     private Boolean isLeftTable;
     private int noOfColumns;
     private SortColumn[] sort_columns;
@@ -18,17 +16,6 @@ public class Table {
     private String[] filter;
 
     // Constructors
-    public Table() {}
-
-    public Table(String database, String name, String[] columns, SortColumn[] sort_columns, boolean generate_unique_id, boolean generate_sort_id, String[] filter) {
-        this.database = database;
-        this.name = name;
-        this.columns = columns;
-        this.sort_columns = sort_columns;
-        this.generate_unique_id = generate_unique_id;
-        this.generate_sort_id = generate_sort_id;
-        this.filter = filter;
-    }
 
     public Table(JSONObject tableObject, Boolean isLeftTable){
         this.database = tableObject.getString("database");
@@ -40,7 +27,7 @@ public class Table {
         for (int i = 0; i < jsonArray.length(); i++) {
             stringArray[i] = jsonArray.getString(i);
         }
-//        String[] stringArray = (String[]) Arrays.copyOf(objectArray, objectArray.length, String[].class);
+
         this.columns = stringArray;
         this.noOfColumns = this.columns.length;
 
@@ -63,10 +50,11 @@ public class Table {
         for (int i = 0; i < filterArray.length(); i++) {
             filterArrayCast[i] = filterArray.getString(i);
         }
-//        String[] filterStringArray = Arrays.copyOf(filterArray, filterArray.length, String[].class);
+
         this.filter = filterArrayCast;
     }
 
+    // Getters and setters
     public Boolean getIsLeftTable() {
         return isLeftTable;
     }
@@ -75,7 +63,6 @@ public class Table {
         isLeftTable = leftTable;
     }
 
-    // Getters and setters
     public String getDatabase() {
         return database;
     }

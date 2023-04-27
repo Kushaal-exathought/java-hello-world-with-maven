@@ -18,26 +18,29 @@ public class HelloWorld {
 
                 JSONObject obj = jsonArray.getJSONObject(i);
 
-                JSONObject leftTableObject = obj.getJSONObject("left_table");
-                Table constructedLeftTableObject = new Table(leftTableObject,true);
+                ConstructQuery cq = new ConstructQuery(obj);
+                System.out.println("Query---->\n" + cq.getOutputQuery());
 
-                JSONArray leftTableSortColumnsArray = leftTableObject.getJSONArray("sort_columns");
-
-                JSONObject rightTableObject = obj.getJSONObject("right_table");
-                Table constructedRightTableObject = new Table(rightTableObject, false);
-
-                JSONArray rightTableSortColumnsArray = rightTableObject.getJSONArray("sort_columns");
-
-                JSONObject joinObject = obj.getJSONObject("join");
-                JoinMethod constructedJoinObject = new JoinMethod(joinObject);
-                JSONArray joinOnArray = joinObject.getJSONArray("on");
-
-                JSONArray compareArray = obj.getJSONArray("compare");
-                ComparisonColumns constructedCompareObject = new ComparisonColumns(compareArray);
-
-
-                GenerateQuery obj1 = new GenerateQuery(constructedLeftTableObject,constructedRightTableObject,constructedJoinObject,constructedCompareObject);
-                obj1.getOutputQuery();
+//                JSONObject leftTableObject = obj.getJSONObject("left_table");
+//                Table constructedLeftTableObject = new Table(leftTableObject,true);
+//
+//                JSONArray leftTableSortColumnsArray = leftTableObject.getJSONArray("sort_columns");
+//
+//                JSONObject rightTableObject = obj.getJSONObject("right_table");
+//                Table constructedRightTableObject = new Table(rightTableObject, false);
+//
+//                JSONArray rightTableSortColumnsArray = rightTableObject.getJSONArray("sort_columns");
+//
+//                JSONObject joinObject = obj.getJSONObject("join");
+//                JoinMethod constructedJoinObject = new JoinMethod(joinObject);
+//                JSONArray joinOnArray = joinObject.getJSONArray("on");
+//
+//                JSONArray compareArray = obj.getJSONArray("compare");
+//                ComparisonColumns constructedCompareObject = new ComparisonColumns(compareArray);
+//
+//
+//                ConstructQuery obj1 = new ConstructQuery(constructedLeftTableObject,constructedRightTableObject,constructedJoinObject,constructedCompareObject);
+//                obj1.getOutputQuery();
 
 //                System.out.println("leftTable DB-->" + leftTableObject.getString("database"));
 //                System.out.println("leftTable name-->" + leftTableObject.getString("name"));
