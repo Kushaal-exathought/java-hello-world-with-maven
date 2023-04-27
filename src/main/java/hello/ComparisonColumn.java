@@ -38,4 +38,13 @@ public class ComparisonColumn {
     public void setCondition(String condition) {
         this.condition = condition;
     }
+
+    @Override
+    public String toString() {
+        return "ComparisonColumn{" +
+                "column1='" + column1 + '\'' +
+                ", column2='" + column2 + '\'' +
+                ", condition='" + condition + '\'' +
+                '}';
+    }
 }

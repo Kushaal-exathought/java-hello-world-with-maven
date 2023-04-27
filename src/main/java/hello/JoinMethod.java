@@ -14,7 +14,6 @@ public class JoinMethod {
 
     // Constructors
     public JoinMethod(JSONObject joinObject) {
-
         this.method = joinObject.getString("method");
 
         JSONArray joinOnArray = joinObject.getJSONArray("on");

@@ -3,14 +3,14 @@ package hello;
 public  class SortColumn {
 
     private String column;
-    private String order_type;
+    private String orderType;
 
     // Constructors
     public SortColumn() {}
 
-    public SortColumn(String column, String order_type) {
+    public SortColumn(String column, String orderType) {
         this.column = column;
-        this.order_type = order_type;
+        this.orderType = orderType;
     }
 
     // Getters and setters
@@ -22,12 +22,20 @@ public  class SortColumn {
         this.column = column;
     }
 
-    public String getOrder_type() {
-        return order_type;
+    public String getOrderType() {
+        return orderType;
     }
 
-    public void setOrder_type(String order_type) {
-        this.order_type = order_type;
+    public void setOrderType(String orderType) {
+        this.orderType = orderType;
+    }
+
+    @Override
+    public String toString() {
+        return "SortColumn{" +
+                "column='" + column + '\'' +
+                ", orderType='" + orderType + '\'' +
+                '}';
     }
 }
 

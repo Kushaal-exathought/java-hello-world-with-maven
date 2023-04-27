@@ -2,6 +2,7 @@ package hello;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+import java.util.Arrays;
 
 public class Table {
 
@@ -10,9 +11,9 @@ public class Table {
     private String[] columns;
     private Boolean isLeftTable;
     private int noOfColumns;
-    private SortColumn[] sort_columns;
-    private boolean generate_unique_id;
-    private boolean generate_sort_id;
+    private SortColumn[] sortColumns;
+    private boolean generateUniqueId;
+    private boolean generateSortId;
     private String[] filter;
 
     // Constructors
@@ -40,10 +41,10 @@ public class Table {
             SortColumn scc = new SortColumn(sortOrder,sortOrderType);
             sc[p] = scc;
         }
-        this.sort_columns = sc;
+        this.sortColumns = sc;
 
-        this.generate_unique_id = tableObject.getBoolean("generate_unique_id");
-        this.generate_sort_id = tableObject.getBoolean("generate_sort_id");
+        this.generateUniqueId = tableObject.getBoolean("generate_unique_id");
+        this.generateSortId = tableObject.getBoolean("generate_sort_id");
 
         JSONArray filterArray =  tableObject.getJSONArray("filter");
         String[] filterArrayCast = new String[filterArray.length()];
@@ -87,28 +88,28 @@ public class Table {
         this.columns = columns;
     }
 
-    public SortColumn[] getSort_columns() {
-        return sort_columns;
+    public SortColumn[] getSortColumns() {
+        return sortColumns;
     }
 
-    public void setSort_columns(SortColumn[] sort_columns) {
-        this.sort_columns = sort_columns;
+    public void setSortColumns(SortColumn[] sortColumns) {
+        this.sortColumns = sortColumns;
     }
 
-    public boolean isGenerate_unique_id() {
-        return generate_unique_id;
+    public boolean isGenerateUniqueId() {
+        return generateUniqueId;
     }
 
-    public void setGenerate_unique_id(boolean generate_unique_id) {
-        this.generate_unique_id = generate_unique_id;
+    public void setGenerateUniqueId(boolean generateUniqueId) {
+        this.generateUniqueId = generateUniqueId;
     }
 
-    public boolean isGenerate_sort_id() {
-        return generate_sort_id;
+    public boolean isGenerateSortId() {
+        return generateSortId;
     }
 
-    public void setGenerate_sort_id(boolean generate_sort_id) {
-        this.generate_sort_id = generate_sort_id;
+    public void setGenerateSortId(boolean generateSortId) {
+        this.generateSortId = generateSortId;
     }
 
     public int getNoOfColumns() {
@@ -125,5 +126,20 @@ public class Table {
 
     public void setFilter(String[] filter) {
         this.filter = filter;
+    }
+
+    @Override
+    public String toString() {
+        return "Table{" +
+                "database='" + database + '\'' +
+                ", name='" + name + '\'' +
+                ", columns=" + Arrays.toString(columns) +
+                ", isLeftTable=" + isLeftTable +
+                ", noOfColumns=" + noOfColumns +
+                ", sortColumns=" + Arrays.toString(sortColumns) +
+                ", generateUniqueId=" + generateUniqueId +
+                ", generateSortId=" + generateSortId +
+                ", filter=" + Arrays.toString(filter) +
+                '}';
     }
 }

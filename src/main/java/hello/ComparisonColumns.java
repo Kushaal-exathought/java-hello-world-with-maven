@@ -2,6 +2,7 @@ package hello;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+import java.util.Arrays;
 
 public class ComparisonColumns {
 
@@ -32,5 +33,12 @@ public class ComparisonColumns {
 
     public void setComparisonColumns(ComparisonColumn[] comparisonColumns) {
         this.comparisonColumns = comparisonColumns;
+    }
+
+    @Override
+    public String toString() {
+        return "ComparisonColumns{" +
+                "comparisonColumns=" + Arrays.toString(comparisonColumns) +
+                '}';
     }
 }
