@@ -102,7 +102,7 @@ public class ConstructQuery {
     }
 
     // Helper methods
-    private String generateQueryForTable(Table tableObject) {
+    private static String generateQueryForTable(Table tableObject) {
         return getTabs(1) + "SELECT " + NEW_LINE
                 + getColumnName(tableObject) + NEW_LINE
                 + generateUniqueColumn(tableObject)
@@ -111,14 +111,14 @@ public class ConstructQuery {
                 + getTabs(1) + "FROM " + tableObject.getDatabase() + "." + tableObject.getName() + NEW_LINE;
     }
 
-    private String generateDataJson(Table table) {
+    private static String generateDataJson(Table table) {
         return getTabs(2) + ",CONCAT( " + NEW_LINE
                 + getTabs(3) + "'{', " + NEW_LINE
                 + getJsonString(table.getColumns())
                 + getTabs(3) + "'}' ) AS data_json " + NEW_LINE;
     }
 
-    private String getJsonString(String[] columns) {
+    private static String getJsonString(String[] columns) {
         StringBuilder jsonQuery = new StringBuilder();
         for (int i = 0; i < columns.length; i++) {
             jsonQuery.append(getTabs(4) + "CONCAT('\"" + columns[i] + "\":','\"', CAST(" + columns[i] + " AS VARCHAR),'\"'");
@@ -132,7 +132,7 @@ public class ConstructQuery {
         return jsonQuery.toString();
     }
 
-    private String getColumnName(Table table) {
+    private static String getColumnName(Table table) {
         String[] columns = table.getColumns();
         StringBuilder sb = new StringBuilder();
         String tabs = getTabs(2);
@@ -146,21 +146,21 @@ public class ConstructQuery {
         return sb.toString();
     }
 
-    private String generateUniqueColumn(Table table) {
+    private static String generateUniqueColumn(Table table) {
         if (!table.isGenerateUniqueId()) {
             return "";
         }
         return getTabs(2) + ",row_number() over (partition by null order by " + String.join(", ", table.getColumns()) + " asc) as unique_id " + NEW_LINE;
     }
 
-    private String generateSortColumn(Table table) {
+    private static String generateSortColumn(Table table) {
         if (!table.isGenerateSortId()) {
             return "";
         }
         return getTabs(2) + ",row_number() over (partition by null order by " + generateSortByQuery(table) + ") as sort_id " + NEW_LINE;
     }
 
-    private String generateSortByQuery(Table table) {
+    private static String generateSortByQuery(Table table) {
         SortColumn[] sc = table.getSortColumns();
         StringBuilder sortBy = new StringBuilder(" ");
         for (int i = 0; i < sc.length; i++) {

@@ -30,7 +30,7 @@ public class Table {
         }
 
         this.columns = stringArray;
-        this.noOfColumns = this.columns.length;
+       // this.noOfColumns = this.columns.length;
 
         JSONArray sortColumnArray = tableObject.getJSONArray("sort_columns");
         SortColumn[] sc = new SortColumn[sortColumnArray.length()];
@@ -112,13 +112,13 @@ public class Table {
         this.generateSortId = generateSortId;
     }
 
-    public int getNoOfColumns() {
-        return noOfColumns;
-    }
-
-    public void setNoOfColumns(int noOfColumns) {
-        this.noOfColumns = noOfColumns;
-    }
+//    public int getNoOfColumns() {
+//        return noOfColumns;
+//    }
+//
+//    public void setNoOfColumns(int noOfColumns) {
+//        this.noOfColumns = noOfColumns;
+//    }
 
     public String[] getFilter() {
         return filter;
@@ -135,7 +135,6 @@ public class Table {
                 ", name='" + name + '\'' +
                 ", columns=" + Arrays.toString(columns) +
                 ", isLeftTable=" + isLeftTable +
-                ", noOfColumns=" + noOfColumns +
                 ", sortColumns=" + Arrays.toString(sortColumns) +
                 ", generateUniqueId=" + generateUniqueId +
                 ", generateSortId=" + generateSortId +

@@ -95,6 +95,7 @@ public class HelloWorld {
 
             }
         } catch (Exception e) {
+            System.out.println("Error occured");
             e.printStackTrace();
         }
     }

@@ -20,7 +20,7 @@ public class JoinMethod {
     private boolean uniqueJoin;
 
     // Constructors
-    public JoinMethod(JSONObject joinObject) throws IllegalArgumentException {
+    public JoinMethod(JSONObject joinObject) {
         JoinType joinMethod = JoinType.valueOf(joinObject.getString("method").toUpperCase());
         this.method = joinMethod;
 
