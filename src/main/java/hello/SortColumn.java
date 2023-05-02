@@ -36,8 +36,3 @@ public class SortColumn {
                 '}';
     }
 }
-
-
-
-
-

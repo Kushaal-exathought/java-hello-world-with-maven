@@ -1,6 +1,5 @@
 package hello;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class ConstructQuery {
@@ -10,6 +9,7 @@ public class ConstructQuery {
     private JoinMethod join;
     private ComparisonColumns comparisonColumns;
 
+    //Static variable
     public static final String NEW_LINE = "\n";
     public static final String EQUAL = "EQUAL";
     public static final String NOT_EQUAL = "NOT_EQUAL";
@@ -17,22 +17,10 @@ public class ConstructQuery {
 
     //Constructor
     public ConstructQuery(JSONObject object) {
-        JSONObject leftTableObject = object.getJSONObject("left_table");
-        Table constructedLeftTableObject = new Table(leftTableObject, true);
-
-        JSONObject rightTableObject = object.getJSONObject("right_table");
-        Table constructedRightTableObject = new Table(rightTableObject, false);
-
-        JSONObject joinObject = object.getJSONObject("join");
-        JoinMethod constructedJoinObject = new JoinMethod(joinObject);
-
-        JSONArray compareArray = object.getJSONArray("compare");
-        ComparisonColumns constructedCompareObject = new ComparisonColumns(compareArray);
-
-        this.leftTable = constructedLeftTableObject;
-        this.rightTable = constructedRightTableObject;
-        this.join = constructedJoinObject;
-        this.comparisonColumns = constructedCompareObject;
+        this.leftTable = new Table(object.getJSONObject("left_table"));
+        this.rightTable = new Table(object.getJSONObject("right_table"));
+        this.join = new JoinMethod(object.getJSONObject("join"));
+        this.comparisonColumns = new ComparisonColumns(object.getJSONArray("compare"));
     }
 
     //Getters and Setters
@@ -172,29 +160,6 @@ public class ConstructQuery {
         return sortBy.toString();
     }
 
-    private static String generateMainQuery() {
-        return "SELECT " + NEW_LINE
-                + "    OLD_TABLE_NAME, " + NEW_LINE
-                + "    OLD_COLUMN_NAME, " + NEW_LINE
-                + "    OLD_COLUMN_VALUE, " + NEW_LINE
-                + "    NEW_TABLE_NAME, " + NEW_LINE
-                + "    NEW_COLUMN_NAME, " + NEW_LINE
-                + "    NEW_COLUMN_VALUE, " + NEW_LINE
-                + "    OLD_TABLE_VALUE_JSON, " + NEW_LINE
-                + "    NEW_TABLE_VALUE_JSON, " + NEW_LINE
-                + "    CASE " + NEW_LINE
-                + "        WHEN ( OLD_TABLE_VALUE_JSON IS NULL AND NEW_TABLE_VALUE_JSON IS NOT NULL ) THEN CONCAT('RECORD MISSING IN ', OLD_TABLE_NAME) " + NEW_LINE
-                + "        WHEN ( OLD_TABLE_VALUE_JSON IS NOT NULL AND NEW_TABLE_VALUE_JSON IS NULL ) THEN CONCAT('RECORD MISSING IN ', NEW_TABLE_NAME) " + NEW_LINE
-                + "        ELSE 'DATA MISMATCH' " + NEW_LINE
-                + "    END AS COMMENTS " + NEW_LINE
-                + "FROM final_table " + NEW_LINE
-                + "ORDER BY " + NEW_LINE
-                + "    OLD_TABLE_VALUE_JSON, " + NEW_LINE
-                + "    NEW_TABLE_VALUE_JSON, " + NEW_LINE
-                + "    OLD_COLUMN_NAME, " + NEW_LINE
-                + "    NEW_COLUMN_NAME " + NEW_LINE;
-    }
-
     private String generateColumnCompareQuery() {
         StringBuilder finalQuery = new StringBuilder();
         ComparisonColumn[] compareArray = this.comparisonColumns.getComparisonColumns();
@@ -239,6 +204,30 @@ public class ConstructQuery {
             joinQuery.append(getTabs(2) + "AND lt.sort_id = rt.sort_id " + NEW_LINE);
         }
         return joinQuery.toString();
+    }
+
+    //Static Methods
+    private static String generateMainQuery() {
+        return "SELECT " + NEW_LINE
+                + "    OLD_TABLE_NAME, " + NEW_LINE
+                + "    OLD_COLUMN_NAME, " + NEW_LINE
+                + "    OLD_COLUMN_VALUE, " + NEW_LINE
+                + "    NEW_TABLE_NAME, " + NEW_LINE
+                + "    NEW_COLUMN_NAME, " + NEW_LINE
+                + "    NEW_COLUMN_VALUE, " + NEW_LINE
+                + "    OLD_TABLE_VALUE_JSON, " + NEW_LINE
+                + "    NEW_TABLE_VALUE_JSON, " + NEW_LINE
+                + "    CASE " + NEW_LINE
+                + "        WHEN ( OLD_TABLE_VALUE_JSON IS NULL AND NEW_TABLE_VALUE_JSON IS NOT NULL ) THEN CONCAT('RECORD MISSING IN ', OLD_TABLE_NAME) " + NEW_LINE
+                + "        WHEN ( OLD_TABLE_VALUE_JSON IS NOT NULL AND NEW_TABLE_VALUE_JSON IS NULL ) THEN CONCAT('RECORD MISSING IN ', NEW_TABLE_NAME) " + NEW_LINE
+                + "        ELSE 'DATA MISMATCH' " + NEW_LINE
+                + "    END AS COMMENTS " + NEW_LINE
+                + "FROM final_table " + NEW_LINE
+                + "ORDER BY " + NEW_LINE
+                + "    OLD_TABLE_VALUE_JSON, " + NEW_LINE
+                + "    NEW_TABLE_VALUE_JSON, " + NEW_LINE
+                + "    OLD_COLUMN_NAME, " + NEW_LINE
+                + "    NEW_COLUMN_NAME " + NEW_LINE;
     }
 
     private static String getComparisonOperator(String comparison) {

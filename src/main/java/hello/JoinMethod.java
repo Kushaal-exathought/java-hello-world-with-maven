@@ -21,8 +21,7 @@ public class JoinMethod {
 
     // Constructors
     public JoinMethod(JSONObject joinObject) {
-        JoinType joinMethod = JoinType.valueOf(joinObject.getString("method").toUpperCase());
-        this.method = joinMethod;
+        this.method = JoinType.valueOf(joinObject.getString("method").toUpperCase());
 
         JSONArray joinOnArray = joinObject.getJSONArray("on");
         ComparisonColumn[] joinOn = new ComparisonColumn[joinOnArray.length()];

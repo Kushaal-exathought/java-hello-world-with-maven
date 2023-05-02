@@ -16,8 +16,7 @@ public class ComparisonColumn {
     public ComparisonColumn(String column1, String column2, String condition) {
         this.column1 = column1;
         this.column2 = column2;
-        CompareCondition compareCondition = CompareCondition.valueOf(condition.toUpperCase());
-        this.condition = compareCondition;
+        this.condition = CompareCondition.valueOf(condition.toUpperCase());
     }
 
     // Getters and Setters

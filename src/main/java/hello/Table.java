@@ -9,8 +9,6 @@ public class Table {
     private String database;
     private String name;
     private String[] columns;
-    private Boolean isLeftTable;
-    private int noOfColumns;
     private SortColumn[] sortColumns;
     private boolean generateUniqueId;
     private boolean generateSortId;
@@ -18,10 +16,9 @@ public class Table {
 
     // Constructors
 
-    public Table(JSONObject tableObject, Boolean isLeftTable) {
+    public Table(JSONObject tableObject) {
         this.database = tableObject.getString("database");
         this.name = tableObject.getString("name");
-        this.isLeftTable = isLeftTable;
 
         JSONArray jsonArray = tableObject.getJSONArray("columns");
         String[] stringArray = new String[jsonArray.length()];
@@ -30,7 +27,6 @@ public class Table {
         }
 
         this.columns = stringArray;
-       // this.noOfColumns = this.columns.length;
 
         JSONArray sortColumnArray = tableObject.getJSONArray("sort_columns");
         SortColumn[] sc = new SortColumn[sortColumnArray.length()];
@@ -56,14 +52,6 @@ public class Table {
     }
 
     // Getters and setters
-    public Boolean getIsLeftTable() {
-        return isLeftTable;
-    }
-
-    public void setIsLeftTable(Boolean leftTable) {
-        isLeftTable = leftTable;
-    }
-
     public String getDatabase() {
         return database;
     }
@@ -112,14 +100,6 @@ public class Table {
         this.generateSortId = generateSortId;
     }
 
-//    public int getNoOfColumns() {
-//        return noOfColumns;
-//    }
-//
-//    public void setNoOfColumns(int noOfColumns) {
-//        this.noOfColumns = noOfColumns;
-//    }
-
     public String[] getFilter() {
         return filter;
     }
@@ -134,7 +114,6 @@ public class Table {
                 "database='" + database + '\'' +
                 ", name='" + name + '\'' +
                 ", columns=" + Arrays.toString(columns) +
-                ", isLeftTable=" + isLeftTable +
                 ", sortColumns=" + Arrays.toString(sortColumns) +
                 ", generateUniqueId=" + generateUniqueId +
                 ", generateSortId=" + generateSortId +
